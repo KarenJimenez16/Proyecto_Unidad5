@@ -1,22 +1,21 @@
-#Script for make a PCA 
-#Karen Jiménez, 2020
+##Script for make a PCA 
+##Karen Jiménez, 2020
 
 #This script make a PCA analysis with the R package SNPRelate. The data is from the
 #work of Schweizer et al. 2015 used in the bash scripts "Download_data" and
 #"use_vcftools" in this directory.
 
-Ejemplo análisis exploratorios genómica de poblaciones
-
-## SNPRelate
-## Instalar (correr solo una vez, lo dejo comentado para su referencia)
+#Install packages SNPRelate, ape and ggplot2 if is necessary. If we already have
+#this packages, only load the libraries in the next step 
 ```{r}
-#source("http://bioconductor.org/biocLite.R")
-#biocLite("gdsfmt")
-#biocLite("SNPRelate")
+source("http://bioconductor.org/biocLite.R")
+biocLite("gdsfmt")
+biocLite("SNPRelate")
+install.packages("ape")
+install.packages("ggplot2")
 ```
 
-
-### Cargar paquetes que se utilizarán
+#Load the libraries necessaries  
 ```{r}
 library(SNPRelate)
 library(ape)
@@ -24,18 +23,14 @@ library(ggplot2)
 ```
 
 
-### Cargar datos
+#Load the data for the vcf file *wolves* and convert it to *.gds* format 
 ```{r}
-##### Para usar con SNPRelate
-## Crear datos en formato gds a partir de plink
-snpgdsBED2GDS("../data/maicesArtegaetal2015.bed", 
-              "../data/maicesArtegaetal2015.fam", 
-              "../data/maicesArtegaetal2015.bim", 
-              out.gdsfn="../data/maicesArtegaetal2015.gds", 
-              option = snpgdsOption(Z=10)) # 10 cromosomas
+wolves<- "../data/wolves" #Tell R where is the a
+snpgdsVCF2GDS(wolves, "test.gds", method="biallelic.only",
+              out.fn = "../data/wolves.gds")
 
-# Ver resumen (esto no carga el archivo)
-snpgdsSummary("../data/maicesArtegaetal2015.gds")
+#Summary of the archive .gds
+snpgdsSummary("../data/wolves.gds")
 
 # Cargar archivo para trabajar con el
 genofile <- snpgdsOpen("../data/maicesArtegaetal2015.gds")
