@@ -1,21 +1,19 @@
 #Script for make a PCA 
 ##Karen Jiménez, 2020
 
-##This script make a PCA analysis with the R package SNPRelate. The data is from the work of Schweizer et al. 2015 used in the bash scripts "Download_data" and "use_vcftools" in this directory.
+##This script make a PCA analysis and a barplot with the R packages SNPRelate and ggplot2. The data is from the work of Schweizer et al. 2015 used in the bash scripts "Download_data" and "use_vcftools" in this directory.
 
-###Install packages SNPRelate, ape and ggplot2 if is necessary. If we already have this packages, only load the libraries in the next step 
+###Install packages SNPRelate and ggplot2 if is necessary. If we already have this packages, only load the libraries in the next step 
 ```{r}
 source("http://bioconductor.org/biocLite.R")
 biocLite("gdsfmt")
 biocLite("SNPRelate")
-install.packages("ape")
 install.packages("ggplot2")
 ```
 
 ###Load the libraries necessaries  
 ```{r}
 library(SNPRelate)
-library(ape)
 library(ggplot2)
 ```
 
