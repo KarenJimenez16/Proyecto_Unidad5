@@ -1,12 +1,9 @@
-##Script for make a PCA 
+#Script for make a PCA 
 ##Karen Jiménez, 2020
 
-#This script make a PCA analysis with the R package SNPRelate. The data is from the
-#work of Schweizer et al. 2015 used in the bash scripts "Download_data" and
-#"use_vcftools" in this directory.
+##This script make a PCA analysis with the R package SNPRelate. The data is from the work of Schweizer et al. 2015 used in the bash scripts "Download_data" and "use_vcftools" in this directory.
 
-#Install packages SNPRelate, ape and ggplot2 if is necessary. If we already have
-#this packages, only load the libraries in the next step 
+###Install packages SNPRelate, ape and ggplot2 if is necessary. If we already have this packages, only load the libraries in the next step 
 ```{r}
 source("http://bioconductor.org/biocLite.R")
 biocLite("gdsfmt")
@@ -15,56 +12,44 @@ install.packages("ape")
 install.packages("ggplot2")
 ```
 
-#Load the libraries necessaries  
+###Load the libraries necessaries  
 ```{r}
 library(SNPRelate)
 library(ape)
 library(ggplot2)
 ```
 
-
-#Load the data for the vcf file *wolves* and convert it to *.gds* format 
+###Load the data for the vcf file *wolves* and convert it to *.gds* format 
 ```{r}
-wolves<- "../data/wolves" #Tell R where is the a
-snpgdsVCF2GDS(wolves, "test.gds", method="biallelic.only",
-              out.fn = "../data/wolves.gds")
+snpgdsBED2GDS("../data/wolves_maf0.5.bed",
+              "../data/wolves_maf0.5.fam",
+              "../data/wolves_maf0.5.bim",
+              out.gdsfn="../data/wolves_maf0.5.gds", 
+              option = snpgdsOption(W=39)) # 39 chromosome 
 
-#Summary of the archive .gds
-snpgdsSummary("../data/wolves.gds")
+###Summary of the archive .gds
+snpgdsSummary("../data/wolves_maf0.5.gds")
 
-# Cargar archivo para trabajar con el
-genofile <- snpgdsOpen("../data/maicesArtegaetal2015.gds")
+###Load the data of the .gds archive
+genofile <- snpgdsOpen("../data/wolves_maf0.5.gds")
 
-# Check snp.ids
+###Check snp.ids
 head(read.gdsn(index.gdsn(genofile, "snp.id")))
 
-# Check sample.ids
+###Check sample.ids
 head(read.gdsn(index.gdsn(genofile, "sample.id")))
 
-# Obtener nombres muestras del gdsn
+###Obtain names of the samples of the gdsn archive 
 sample.id <- read.gdsn(index.gdsn(genofile, "sample.id"))
 sample.id
-
-##### Metadata
-# load
-fullmat<- read.delim(file= "../meta/maizteocintle_SNP50k_meta_extended.txt")
-
-# check
-head(fullmat)
-nrow(fullmat)
-head(fullmat$NSiembra) # corresponde al número del ID de las muestras
-head(sample.id)
-
 ```
 
-
-### Realizar PCA 
-
+###Make the PCA
 ```{r}
-# PCA
+###PCA
 pca <- snpgdsPCA(genofile, num.thread=2)
 
-# Calcular el % de variación contenido por los primeros componentes
+###Calculate the % of variation in the first components 
 pc.percent <- pca$varprop*100
 head(round(pc.percent, 2))
 
@@ -73,97 +58,39 @@ sum(x[1:4])
 sum(x[1:10])
 sum(x[1:30])
 
-
-# Poner resultados en df
+###Create a data frame with the results of the components
 tab <- data.frame(sample.id = pca$sample.id,
     EV1 = pca$eigenvect[,1],    # the first eigenvector
     EV2 = pca$eigenvect[,2],    # the second eigenvector
     stringsAsFactors = FALSE)
 head(tab)
 
-# Plot
-ggplot(data = tab, aes(x=EV2, y=EV1)) + geom_point() +
+###Plot
+ggplot(data = tab, aes(x=EV2, y=EV1), colour= id ) + geom_point() +
   ylab(paste0("eigenvector 1 explaining ", round(pc.percent, 2)[1], "%")) +
-  xlab(paste0("eigenvector 2 explaining ", round(pc.percent, 2)[2], "%"))
-
+  xlab(paste0("eigenvector 2 explaining ", round(pc.percent, 2)[2], "%")) 
 ```
 
-**Ejercicio**: repite el PCA y plot anterior pero utilizando sólo los SNPS con MAF>=0.05 (debeles seleccionarlos desde R)
+##Make a graph of the heterozigocity of the individual
 
-```{r, echo=FALSE}
-# PCA
-pca <- snpgdsPCA(genofile, num.thread=2, maf=0.05)
-
-# Calcular el % de variación contenido por los primeros componentes
-pc.percent <- pca$varprop*100
-head(round(pc.percent, 2))
-
-x<-round(pc.percent, 2)
-sum(x[1:4])
-sum(x[1:10])
-sum(x[1:30])
-
-
-# Poner resultados en df
-tab <- data.frame(sample.id = pca$sample.id,
-    EV1 = pca$eigenvect[,1],    # the first eigenvector
-    EV2 = pca$eigenvect[,2],    # the second eigenvector
-    stringsAsFactors = FALSE)
-head(tab)
-
-# Plot
-ggplot(data = tab, aes(x=EV2, y=EV1)) + geom_point() +
-  ylab(paste0("eigenvector 1 explaining ", round(pc.percent, 2)[1], "%")) +
-  xlab(paste0("eigenvector 2 explaining ", round(pc.percent, 2)[2], "%"))
-
-```
-
-
-Repite el PCA coloreando los maíces por Categoría de Altitud.
+###Load the data of heterozigocity 
 ```{r}
-# obtner info Categ.Altitud
-pop_code <- as.vector(fullmat$Categ.Altitud) 
-
-# hacer pop_codes raza coincidan con samples
-tab <- data.frame(sample.id = pca$sample.id,
-    pop = factor(pop_code)[match(pca$sample.id, sample.id)],
-    EV1 = pca$eigenvect[,1],    # the first eigenvector
-    EV2 = pca$eigenvect[,2],    # the second eigenvector
-    stringsAsFactors = FALSE)
-head(tab)
-
-# Plot
-
-ggplot(data = tab, aes(x=EV2, y=EV1, colour = pop)) + geom_point() +
-  ylab(paste0("eigenvector 1 explaining ", round(pc.percent, 2)[1], "%")) +
-  xlab(paste0("eigenvector 2 explaining ", round(pc.percent, 2)[2], "%"))
-
+het<- read.table("../data/out.het",header=TRUE)
 ```
 
-**Ejercicio**: repite el plot anterior pero coloreando en un gradiente de colores ("green" para bajo y "brown" para alto). Pista para el gradiente de color [en este link](https://www.r-graph-gallery.com/221-continuous-color-palette-with-ggplot2/). La leyenda debe llevar debe decir "Altitude (masl)".
+###Make a barplot 
+```{r}
 
-Debe verse así:
-
-```{r, echo=FALSE}
-# obtner info Categ.Altitud
-pop_code <- as.vector(fullmat$Altitud) 
-
-# hacer pop_codes raza coincidan con samples
-tab <- data.frame(sample.id = pca$sample.id,
-    pop = as.numeric(pop_code)[match(pca$sample.id, sample.id)],
-    EV1 = pca$eigenvect[,1],    # the first eigenvector
-    EV2 = pca$eigenvect[,2],    # the second eigenvector
-    stringsAsFactors = FALSE)
-# Plot
-
-ggplot(data = tab, aes(x=EV2, y=EV1, colour = pop)) + geom_point() +
-  ylab(paste0("eigenvector 1 explaining ", round(pc.percent, 2)[1], "%")) +
-  xlab(paste0("eigenvector 2 explaining ", round(pc.percent, 2)[2], "%")) +
-  scale_color_gradient(low = "green", high = "brown") + 
-  labs(colour = "Altitude (masl)")
-
-
-
+ggplot(data = het, aes(x=het$INDV, y=het$F)) + #We are telling ggplot what data need to use and the axis of the plot
+  geom_bar(stat = "identity") + #Type of plot: barplot
+  coord_flip() + #Rotate the plot
+  ggtitle("Heterozigocity (Fixation index)") + #Title of the plot
+  theme(title = element_text(hjust = 0.5)) + #Colocate the title in the center of the image
+  ylab("Fixation index") + #Names of the axis
+  xlab("Individual") + 
+  theme_classic(base_size = 5) + #Size of the font 
+  theme(axis.text.x = element_text(size = 10)) + #Size of the axis and text of the axis
+  theme(axis.title.y = element_text(size = 10)) +
+  theme(axis.title.x = element_text(size = 10)) +
+  theme(title = element_text(size = 15)) #Size of the title 
 ```
-
-¿Necesitas otra pista? considera que ggplot2 solo puede hacer gradietes de variables numéricas.
