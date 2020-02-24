@@ -1,0 +1,18 @@
+###README
+
+Contains scripts for download data of Dryad, use some functions and filters in *vcftools* and *plink* and a R script for make a PCA and a barplot with the data.
+
+First, we need to download this repository in the home of our computer in order to the scripts functions correctly.
+
+####Scripts and directories
+bin directory, contains all the scripts necessaries for data analysis and plotting. Inside data directory, we have a plink executable for the analysis in the scripts in bin directory. Additionally, in data directory is going to be saved the outputs of the analysis of the scripts.
+
+**1.Download_data.sh** download data of the work of Schweizer et al. 2015.Targeted capture and resequencing of 1040 genes reveal environmentally driven functional variation in gray wolves.Molecular Ecology 26: 357-379. Dryad Dataset, https://doi.org/10.5061/dryad.8g0s3. The data is in vcf format and are going to be downloaded in the data directory
+
+**2.use_vcftools.sh** containt the use of some commands and how to make filters in vcftools. The script use the data of the work of Schweizer et al. 2015.
+
+**3.use_plink.sh** script convert the plink .ped archive to .bed to generate .bim, .fam y .bed archive
+
+**4.PCA.rmd** make a PCA analysis and a barplot with the R packages SNPRelate and ggplot2. The data is from the work of Schweizer et al. 2015
+
+**5.PCA.html** is a report of the script **PCA.rmd**
