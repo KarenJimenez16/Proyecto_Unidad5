@@ -14,6 +14,8 @@ cd ../data
 #we can call the docker container using $vcftools
 vcftools="sudo docker run --rm -v /home/karenjimenez/Proyecto_Unidad5/data:/data biocontainers/vcftools:0.1.15 vcftools"
 
+echo " "
+
 #Command to know information of the vcf archive (Number of individuals and SNPs)
 echo "Information of the vcf archive (Number of individuals and SNPs)"
 $vcftools --vcf wolves
@@ -50,6 +52,8 @@ echo " "
 #Command to calculate the heterozygosity of each individual
 echo "Calculate the heterozygosity of each individual"
 $vcftools --vcf wolves --het
+
+echo " "
 
 #Commmand to calcute the nucleotide diversity for each site
 echo "Calcute the nucleotide diversity for site"

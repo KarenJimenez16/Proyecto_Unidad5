@@ -7,7 +7,7 @@
 #Move to the data directory
 cd ../data
 
-We have the 64-bit Linux version of plink in the data directory. but if
+#We have the 64-bit Linux version of plink in the data directory. but if
 #you have another operation system you can search in the plink website
 #(https://www.cog-genomics.org/plink/1.9) the adecuate version for your computer.
 #You need to use the commmand `wget` and add the link to the plink archive
