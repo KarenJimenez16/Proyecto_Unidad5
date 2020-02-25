@@ -366,8 +366,8 @@ summary {
 
 
 <p>#Script for make a PCA ##Karen Jiménez, 2020</p>
-<p>##This script make a PCA analysis with the R package SNPRelate. The data is from the work of Schweizer et al. 2015 used in the bash scripts “Download_data” and “use_vcftools” in this directory.</p>
-<p>###Install packages SNPRelate, ape and ggplot2 if is necessary. If we already have this packages, only load the libraries in the next step</p>
+<p>##This script make a PCA analysis and a barplot with the R packages SNPRelate and ggplot2. The data is from the work of Schweizer et al. 2015 used in the bash scripts “Download_data” and “use_vcftools” in this directory.</p>
+<p>###Install packages SNPRelate and ggplot2 if is necessary. If we already have this packages, only load the libraries in the next step</p>
 <pre class="r"><code>source(&quot;http://bioconductor.org/biocLite.R&quot;)</code></pre>
 <pre><code>## Bioconductor version 3.6 (BiocInstaller 1.28.0), ?biocLite for help</code></pre>
 <pre><code>## A new version of Bioconductor is available after installing the most recent
@@ -379,7 +379,6 @@ summary {
 <pre><code>## installation path not writeable, unable to update packages: boot, class,
 ##   cluster, codetools, foreign, KernSmooth, lattice, MASS, Matrix, mgcv, nlme,
 ##   rpart, survival</code></pre>
-<pre><code>## Old packages: 'ade4', 'digest', 'sp', 'stringi', 'vctrs'</code></pre>
 <pre class="r"><code>biocLite(&quot;SNPRelate&quot;)</code></pre>
 <pre><code>## BioC_mirror: https://bioconductor.org</code></pre>
 <pre><code>## Using Bioconductor 3.6 (BiocInstaller 1.28.0), R 3.4.4 (2018-03-15).</code></pre>
@@ -387,10 +386,6 @@ summary {
 <pre><code>## installation path not writeable, unable to update packages: boot, class,
 ##   cluster, codetools, foreign, KernSmooth, lattice, MASS, Matrix, mgcv, nlme,
 ##   rpart, survival</code></pre>
-<pre><code>## Old packages: 'ade4', 'digest', 'sp', 'stringi', 'vctrs'</code></pre>
-<pre class="r"><code>install.packages(&quot;ape&quot;)</code></pre>
-<pre><code>## Installing package into '/home/karenjimenez/R/x86_64-pc-linux-gnu-library/3.4'
-## (as 'lib' is unspecified)</code></pre>
 <pre class="r"><code>install.packages(&quot;ggplot2&quot;)</code></pre>
 <pre><code>## Installing package into '/home/karenjimenez/R/x86_64-pc-linux-gnu-library/3.4'
 ## (as 'lib' is unspecified)</code></pre>
@@ -398,8 +393,7 @@ summary {
 <pre class="r"><code>library(SNPRelate)</code></pre>
 <pre><code>## Loading required package: gdsfmt</code></pre>
 <pre><code>## SNPRelate -- supported by Streaming SIMD Extensions 2 (SSE2)</code></pre>
-<pre class="r"><code>library(ape)
-library(ggplot2)</code></pre>
+<pre class="r"><code>library(ggplot2)</code></pre>
 <p>###Load the data for the vcf file <em>wolves</em> and convert it to <em>.gds</em> format</p>
 <pre class="r"><code>snpgdsBED2GDS(&quot;../data/wolves_maf0.5.bed&quot;,
               &quot;../data/wolves_maf0.5.fam&quot;,
@@ -410,11 +404,11 @@ library(ggplot2)</code></pre>
 ##  BED file: &quot;../data/wolves_maf0.5.bed&quot; in the SNP-major mode (Sample X SNP)
 ##  FAM file: &quot;../data/wolves_maf0.5.fam&quot;, DONE.
 ##  BIM file: &quot;../data/wolves_maf0.5.bim&quot;, DONE.
-## Mon Feb 24 12:54:26 2020     store sample id, snp id, position, and chromosome.
+## Tue Feb 25 09:26:29 2020     store sample id, snp id, position, and chromosome.
 ##  start writing: 107 samples, 5224 SNPs ...
-##      Mon Feb 24 12:54:26 2020    0%
-##      Mon Feb 24 12:54:26 2020    100%
-## Mon Feb 24 12:54:26 2020     Done.
+##      Tue Feb 25 09:26:29 2020    0%
+##      Tue Feb 25 09:26:29 2020    100%
+## Tue Feb 25 09:26:29 2020     Done.
 ## Optimize the access efficiency ...
 ## Clean up the fragments of GDS file:
 ##     open the file '../data/wolves_maf0.5.gds' (178.0K)
@@ -469,12 +463,12 @@ pca &lt;- snpgdsPCA(genofile, num.thread=2)</code></pre>
 ##     using 2 (CPU) cores
 ## PCA:    the sum of all selected genotypes (0,1,2) = 15995
 ## CPU capabilities: Double-Precision SSE2
-## Mon Feb 24 12:54:26 2020    (internal increment: 7004)
+## Tue Feb 25 09:26:29 2020    (internal increment: 7004)
 ## 
 [..................................................]  0%, ETC: ---    
 [==================================================] 100%, completed in 0s
-## Mon Feb 24 12:54:26 2020    Begin (eigenvalues and eigenvectors)
-## Mon Feb 24 12:54:26 2020    Done.</code></pre>
+## Tue Feb 25 09:26:29 2020    Begin (eigenvalues and eigenvectors)
+## Tue Feb 25 09:26:29 2020    Done.</code></pre>
 <pre class="r"><code>###Calculate the % of variation in the first components 
 pc.percent &lt;- pca$varprop*100
 head(round(pc.percent, 2))</code></pre>
